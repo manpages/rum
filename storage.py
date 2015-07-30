@@ -34,8 +34,8 @@ class Call(Base):
   longitude     = Column (String(255),  nullable=False)
   message       = Column (String(1000), nullable=True)
   def __repr__(self):
-    return "<Call(agreement_id='%s', active='%s', latitude='%s', longitude='%s', message='%s'> % ( self.agreement_id
-                                                                                                 , self.active
-                                                                                                 , self.latitude
-                                                                                                 , self.longitude
-                                                                                                 , self.message )
+    return "<Call(agreement_id='%s', active='%s', latitude='%s', longitude='%s', message='%s'>" % ( self.agreement_id
+                                                                                                  , self.active
+                                                                                                  , self.latitude
+                                                                                                  , self.longitude
+                                                                                                  , self.message )
