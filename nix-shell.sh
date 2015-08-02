@@ -1,1 +1,1 @@
-nix-shell -p python34Packages.tornado python34Packages.sqlalchemy9
+nix-shell -p python34Packages.tornado python34Packages.sqlalchemy9 sqlite
