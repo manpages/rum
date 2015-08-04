@@ -2,7 +2,6 @@ import sys
 sys.path.append('.')
 
 import hashlib
-import bytes
 import os
 
 def salt():
@@ -13,7 +12,10 @@ def hashing_algorithm(x):
   return h.hexdigest()
 
 def crypto_noise():
-  return os.urandom(32)
+  return os.urandom(32).encode('base64')
 
 def hash_width():
-  return len(hashing_algorithm("sample"))
+  return len(hash_sample())
+
+def hash_sample():
+  return hashing_algorithm("sample")

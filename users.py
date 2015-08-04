@@ -1,7 +1,7 @@
 import sys
 sys.path.append('.')
 
-import rumcfg
+from rumcfg import *
 import storage
 import extras
 

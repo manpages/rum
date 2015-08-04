@@ -1,41 +1,54 @@
-from sqlalchemy import Column, Integer, Boolean, String, ForeignKey
+import sys
+sys.path.append('.')
 
-class Agreement(Base):
-  __tablename__ = 'agreements'
-  id            = Column (Integer,      primary_key=True)
-  number        = Column (String(255),  nullable=False)
-  def __repr__(self):
-    return "<Agreement(number='%s')>" % (self.number)
+import sqlite3 as s
 
-class Device(Base):
-  __tablename__ = 'devices'
-  id            = Column (Integer,      primary_key=True)
-  name          = Column (String(255),  nullable=False)
-  def __repr__(self):
-    return "<Device(name='%s')>" % (self.name)
+import users
 
-class Session(Base):
-  __tablename__ = 'sessions'
-  id            = Column (Integer,      primary_key=True)
-  agreement_id  = Column (Integer,      ForeignKey('agreements.id'))
-  device_id     = Column (Integer,      ForeignKey('devices.id'))
-  token         = Column (String(255),  nullable=False)
-  def __repr__(self):
-    return "<Session(device_id='%s', agreement_id='%s', token='%s')>" % ( self.device_id
-                                                                        , self.agreement_id
-                                                                        , self.token)
+db = s.connect('rum.db')
 
-class Call(Base):
-  __tablename__ = 'calls'
-  id            = Column (Integer,      primary_key=True)
-  agreement_id  = Column (Integer,      ForeignKey('agreements.id'))
-  active        = Column (Boolean,      default=True)
-  latitude      = Column (String(255),  nullable=False)
-  longitude     = Column (String(255),  nullable=False)
-  message       = Column (String(1000), nullable=True)
-  def __repr__(self):
-    return "<Call(agreement_id='%s', active='%s', latitude='%s', longitude='%s', message='%s'>" % ( self.agreement_id
-                                                                                                  , self.active
-                                                                                                  , self.latitude
-                                                                                                  , self.longitude
-                                                                                                  , self.message )
+def one(q, a=()):
+  return run(q, a, lambda x: x.fetchone())
+
+def run(q, a=(), f=(lambda x: x.fetchall())):
+  global db
+  print("Running: %s with %s" % (q, a))
+  with db:
+    e = db.cursor()
+    e.execute(q, a)
+    return f(e)
+
+def version():
+  return one('SELECT SQLITE_VERSION()')
+
+def addAgreement(agreement, password):
+  return run("""
+  INSERT INTO agreements ( number
+                         , password )
+  VALUES ( ?, ? )
+  """, (agreement, users.hash_password(password)))
+
+def getToken(agreement, device):
+  return one("""
+  SELECT token FROM sessions
+  WHERE agreement = (SELECT id FROM agreements WHERE number = ?)
+    AND device    = (SELECT id FROM devices    WHERE name   = ?)
+  """, (agreement, device))
+
+def setToken(agreement, device, token):
+  return run("""
+  INSERT OR REPLACE INTO sessions
+  SELECT A.id AS agreement
+       , D.id AS device
+       , ?    AS token
+  FROM agreements AS A
+     , devices    AS D
+  WHERE A.number = ?
+    AND D.name   = ?
+  """, (token, agreement, device))
+
+def addDevice(name):
+  print (name)
+  return run("""
+  INSERT INTO devices (name) VALUES (?)
+  """, (name,))

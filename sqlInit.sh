@@ -1,1 +1,2 @@
-sqlite3 rum.db -init init.sql
+mv rum.db{,.old}
+sqlite3 rum.db < init.sql
