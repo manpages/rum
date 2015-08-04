@@ -12,11 +12,13 @@ def one(q, a=()):
 
 def run(q, a=(), f=(lambda x: x.fetchall())):
   global db
-  print("Running: %s with %s" % (q, a))
+  print("<Query>\n%s\nwith\n%s" % (q, a)) # Yeah, I know about debug. Shut up
   with db:
     e = db.cursor()
     e.execute(q, a)
-    return f(e)
+    y = f(e)
+    print("=> %s\n</Query>" % y)
+    return y
 
 def version():
   return one('SELECT SQLITE_VERSION()')
@@ -48,7 +50,28 @@ def setToken(agreement, device, token):
   """, (token, agreement, device))
 
 def addDevice(name):
-  print (name)
   return run("""
   INSERT INTO devices (name) VALUES (?)
   """, (name,))
+
+def addCallDict(d):
+  return run("""
+  INSERT INTO calls ( agreement
+                    , device
+                    , latitude
+                    , longitude
+                    , message
+                    , received
+                    , beamed )
+  SELECT A.id                           AS agreement
+       , D.id                           AS device
+       , :latitude                      AS latitude
+       , :longitude                     AS longitude
+       , :message                       AS message
+       , (SELECT strftime('%s', 'now')  AS received)
+       , :beamed                        AS beamed
+  FROM ( agreements AS A
+       , devices    AS D )
+  WHERE A.number = :agreement
+    AND D.name   = :device
+  """, d)
