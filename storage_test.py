@@ -37,3 +37,5 @@ addCallDict(d)
 run("""
 SELECT * FROM calls
 """)
+
+getPasswordHash(agreement)

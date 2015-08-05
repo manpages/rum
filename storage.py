@@ -75,3 +75,8 @@ def addCallDict(d):
   WHERE A.number = :agreement
     AND D.name   = :device
   """, d)
+
+def getPasswordHash(agreement):
+  return one("""
+  SELECT password FROM agreements WHERE number = ?
+  """, (agreement,))

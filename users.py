@@ -14,8 +14,8 @@ def next_token(x):
     return (True,  tok)
   return (False, "Malformed initial token. This should never happen.")
 
-def init_token_chain(device, agreement, password):
-  h = get_password_hash(agreement)
+def initTokenChain(device, agreement, password):
+  h = getPasswordHash(agreement)
   if hash_password(password) == h:
     (tr, tok) = next_token(h)
     assrt(tr)
