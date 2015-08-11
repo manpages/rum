@@ -5,12 +5,12 @@ import sqlite3 as s
 
 import users
 
-db = s.connect('rum.db')
-
 def one(q, a=()):
+  db = s.connect('rum.db')
   return run(q, a, lambda x: x.fetchone())
 
 def run(q, a=(), f=(lambda x: x.fetchall())):
+  db = s.connect('rum.db')
   global db
   print("<Query>\n%s\nwith\n%s" % (q, a)) # Yeah, I know about debug. Shut up
   with db:
