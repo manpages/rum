@@ -23,6 +23,7 @@ def main():
   """)
 
   t1 = next_token(t0)[1]
+  print (t1)
   setToken(agreement, device, t1)
   run("""
   SELECT * FROM sessions 

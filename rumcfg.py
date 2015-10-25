@@ -1,7 +1,7 @@
 import sys
 sys.path.append('.')
 
-from base64 import b64encode
+import base64
 
 import hashlib
 import os
@@ -15,7 +15,7 @@ def hashing_algorithm(x):
 
 def crypto_noise():
   x = os.urandom(32)
-  return str(x)
+  return base64.urlsafe_b64encode(x)
 
 def hash_width():
   return len(hash_sample())
