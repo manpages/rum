@@ -14,7 +14,13 @@ class Main(tornado.web.RequestHandler):
     self.set_header("Content-Type", "text/html")
     self.write("Meow?")
 
-application = tornado.web.Application([ (r"/", Main) ])
+class Dumb(tornado.web.RequestHandler):
+  def post(self):
+    self.set_header("Content-Type", "application/json")
+    self.write('{"result": "It fucking works", "token": "666"}')
+
+application = tornado.web.Application([ (r"/",     Main)
+                                      , (r"/dumb", Dumb) ])
 
 if __name__ == "__main__":
   print("Listening to 10081 (sqlite: %s)" % storage.version())
