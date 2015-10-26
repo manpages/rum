@@ -41,5 +41,11 @@ def main():
   SELECT * FROM calls
   """)
 
+  testUser = ('aliester', '1938-666')
+  addAgreement(testUser[0], testUser[1])
+  run("""
+  SELECT * FROM agreements
+  """)
+
 if __name__ == "__main__":
   main()

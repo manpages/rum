@@ -1,6 +1,7 @@
 import sys
 sys.path.append('.')
 
+import json
 import tornado
 import tornado.ioloop
 import tornado.web
@@ -8,6 +9,7 @@ import sys
 
 import rumcfg
 import storage
+from requesthandler import handle
 
 class Main(tornado.web.RequestHandler):
   def get(self):
@@ -17,7 +19,20 @@ class Main(tornado.web.RequestHandler):
 class Dumb(tornado.web.RequestHandler):
   def post(self):
     self.set_header("Content-Type", "application/json")
-    self.write('{"result": "It fucking works", "token": "666"}')
+    try:
+      x = self.request.body
+      k = x.rfind('}')
+      c = lambda x: "Got request ``" + x + "''"
+      d = json.loads(x[:(k+1)])
+
+      print(c(x))
+    except:
+      self.write('{"error": "Malformed request"}such padded much random')
+      return
+    y = json.dumps(handle(d))
+    print("Woohoo ``" + y + "''")
+    self.write(y)
+    return
 
 application = tornado.web.Application([ (r"/",     Main)
                                       , (r"/dumb", Dumb) ])
