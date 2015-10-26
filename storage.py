@@ -49,10 +49,22 @@ def setToken(agreement, device, token):
     AND D.name   = ?
   """, (token, agreement, device))
 
+def getDevice(name):
+  return one("""
+  SELECT id FROM devices WHERE name = ?
+  """, (name,))
+
 def addDevice(name):
   return run("""
   INSERT INTO devices (name) VALUES (?)
   """, (name,))
+
+def ensureDevice(name):
+  y = getDevice(name)
+  if y is None:
+    addDevice(name)
+    return getDevice(name)[0]
+  return y[0]
 
 def addCallDict(d):
   return run("""

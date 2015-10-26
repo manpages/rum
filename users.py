@@ -25,6 +25,7 @@ def initTokenChain(device, agreement, password):
   if hash_password(password) == h:
     (tr, tok) = next_token(h)
     assrt(tr, "(initTokenChain): Token generator failure. We're very fucked!")
+    storage.ensureDevice(device)
     storage.setToken(agreement, device, tok)
     return (True, tok)
   else:
