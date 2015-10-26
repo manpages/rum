@@ -1,6 +1,9 @@
 import sys
 sys.path.append('.')
 
+import time
+import calendar
+
 from storage import *
 from users   import *
 
@@ -26,7 +29,23 @@ def heartbeat(d):
   return { 'error': 'Not implemented' }
 
 def call(d):
-  return { 'error': 'Not implemented' }
+  def callDo(d):
+    lon = d['payload']['position']['coords']['longitude']
+    lat = d['payload']['position']['coords']['latitude']
+    d1 = { 'device':        d['deviceId']
+         , 'agreement':     d['username']
+         , 'latitude':      lat
+         , 'longitude':     lon
+         , 'message':       ''
+         , 'beamed':        calendar.timegm(time.gmtime()) }
+    c = storage.addCallDict(d1)
+    return { 'result': 'Call #' + str(c) + ' accepted'
+           , 'token':   bumpTokenChain(d['deviceId'], d['username'], d['token']) }
+  (tr, msg) = isAuthorized(d['deviceId'], d['username'], d['token'])
+  if tr:
+    return callDo(d)
+  else:
+    return { 'error': msg }
 
 def unknown(d):
   return { 'error':  "Ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn" }

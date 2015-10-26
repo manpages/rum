@@ -5,8 +5,10 @@ import sqlite3 as s
 
 import users
 
+def insert(q, a=()):
+  return run(q, a, lambda x: x.lastrowid)
+
 def one(q, a=()):
-  db = s.connect('rum.db')
   return run(q, a, lambda x: x.fetchone())
 
 def run(q, a=(), f=(lambda x: x.fetchall())):
@@ -67,7 +69,7 @@ def ensureDevice(name):
   return y[0]
 
 def addCallDict(d):
-  return run("""
+  return insert("""
   INSERT INTO calls ( agreement
                     , device
                     , latitude

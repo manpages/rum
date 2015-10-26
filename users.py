@@ -31,3 +31,15 @@ def initTokenChain(device, agreement, password):
   else:
     #inc_login_fail(agreement) # We want to eventually protect ourselves vs bruteforce
     return (False, "Wrong password.")
+
+def bumpTokenChain(device, agreement, token): # ONLY TO BE CALLED AFTER AUTH!
+  (tr, tok) = next_token(token)
+  assrt(tr, "(bumpTokenChain): faied to generate next token from previous - " + token)
+  storage.setToken(agreement, device, tok)
+  return tok
+
+def isAuthorized(device, agreement, token):
+  tok = storage.getToken(agreement, device)
+  if tok is None:
+    return (False, "Token chain wasn't initiated, try logging in.")
+  return ((token == tok[0]), "Session dropped for some reason, try logging in again.")
